@@ -11,16 +11,16 @@ export default function Home() {
   const [portfolioItems, setPortfolioItems] = useState<Array<{id: number, title: string, image: string}>>([]);
 
   const featuredImages = [
-    { id: 1, title: 'Insanity', image: '/gallery/Insanity.png' },
-    { id: 2, title: 'Iris One Woman Army', image: '/gallery/Iris One Woman Army.png' },
-    { id: 3, title: 'Iris Oni', image: '/gallery/Iris Oni.png' },
-    { id: 4, title: 'Lounging Misfits', image: '/gallery/Lounging MisfitsFINAL.png' },
-    { id: 5, title: 'Patchworks', image: '/gallery/patchworks.png' },
-    { id: 6, title: 'Saiko Artist', image: '/gallery/Saiko Artist RESIZE.png' },
-    { id: 7, title: 'Saiko Oni', image: '/gallery/Saiko Oni.png' },
-    { id: 8, title: 'Saiko Wreak Havoc', image: '/gallery/Saiko wreak havoc sat high final full quality.png' },
-    { id: 9, title: 'Sakuya The Maid', image: '/gallery/sakuya the maid.png' },
-    { id: 10, title: 'The Honey Bee', image: '/gallery/The Honey Bee.png' },
+    { id: 1, title: 'Insanity', image: '/gallery/Insanity.jpg' },
+    { id: 2, title: 'Iris One Woman Army', image: '/gallery/Iris One Woman Army.jpg' },
+    { id: 3, title: 'Iris Oni', image: '/gallery/Iris Oni.jpg' },
+    { id: 4, title: 'Lounging Misfits', image: '/gallery/Lounging MisfitsFINAL.jpg' },
+    { id: 5, title: 'Patchworks', image: '/gallery/patchworks.jpg' },
+    { id: 6, title: 'Saiko Artist', image: '/gallery/Saiko Artist RESIZE.jpg' },
+    { id: 7, title: 'Saiko Oni', image: '/gallery/Saiko Oni.jpg' },
+    { id: 8, title: 'Saiko Wreak Havoc', image: '/gallery/Saiko wreak havoc sat high final full quality.jpg' },
+    { id: 9, title: 'Sakuya The Maid', image: '/gallery/sakuya the maid.jpg' },
+    { id: 10, title: 'The Honey Bee', image: '/gallery/The Honey Bee.jpg' },
   ];
 
   useEffect(() => {
