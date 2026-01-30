@@ -9,6 +9,17 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('about');
   const [portfolioItems, setPortfolioItems] = useState<Array<{id: number, title: string, image: string}>>([]);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
+  const [contactForm, setContactForm] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
   const featuredImages = [
     { id: 1, title: 'Insanity', image: '/gallery/Insanity.jpg' },
@@ -35,6 +46,17 @@ export default function Home() {
     };
     
     fetchGalleryImages();
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   useEffect(() => {
@@ -71,6 +93,42 @@ export default function Home() {
     setCurrentImageIndex((prev) => prev === featuredImages.length - 1 ? 0 : prev + 1);
   };
 
+  const handleContactSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus(null);
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(contactForm),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSubmitStatus({ type: 'success', message: 'Message sent successfully! I\'ll get back to you soon.' });
+        setContactForm({ firstName: '', lastName: '', email: '', subject: '', message: '' });
+      } else {
+        setSubmitStatus({ type: 'error', message: data.error || 'Failed to send message. Please try again.' });
+      }
+    } catch (error) {
+      setSubmitStatus({ type: 'error', message: 'An error occurred. Please try again later.' });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleContactChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setContactForm({
+      ...contactForm,
+      [e.target.name]: e.target.value
+    });
+  };
+
   const bannerOpacity = Math.max(0, Math.min(1, 1 - scrollY / 400));
 
   const buttonStyle = {
@@ -90,37 +148,38 @@ export default function Home() {
         backgroundImage: 'url(/images/DREAMS.png)',
         backgroundSize: 'cover',
         backgroundPosition: '50% 80%',
-        height: '400px',
+        height: isMobile ? '200px' : isTablet ? '300px' : '400px',
         width: '100%',
-        transform: `translateY(${-scrollY * 1.5}px)`,
+        transform: `translateY(${-scrollY * (isMobile ? 0.5 : 1.5)}px)`,
         opacity: bannerOpacity,
         transition: 'transform 0.6s ease-out, opacity 0.8s ease-out'
       }}></div>
-      <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', padding: isMobile ? '10px' : '20px' }}>
         <Image
           src="/images/Strings PATCH CROP PFP.png"
           alt="Profile Picture"
-          width={150}
-          height={150}
+          width={isMobile ? 100 : 150}
+          height={isMobile ? 100 : 150}
           style={{ borderRadius: '50%' }}
         />
       </div>
-      <h1 style={{ textAlign: 'center', fontFamily: 'Georgia, serif', fontSize: '2rem', margin: '10px 0', color: '#111' }}>Artspear</h1>
-      <p style={{ textAlign: 'center', fontSize: '0.8rem', margin: '0 20px', color: '#111' }}>Digital Artist/Illustrator/Character Designer</p>
+      <h1 style={{ textAlign: 'center', fontFamily: 'Georgia, serif', fontSize: isMobile ? '1.5rem' : '2rem', margin: '10px 0', color: '#111' }}>Artspear</h1>
+      <p style={{ textAlign: 'center', fontSize: isMobile ? '0.7rem' : '0.8rem', margin: '0 20px', color: '#111' }}>Digital Artist/Illustrator/Character Designer</p>
       
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', margin: '30px 20px 20px', maxWidth: '1200px', marginLeft: 'auto', marginRight: 'auto' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: isMobile ? '5px' : '10px', margin: isMobile ? '15px 10px 10px' : '30px 20px 20px', maxWidth: '1200px', marginLeft: 'auto', marginRight: 'auto', flexWrap: isMobile ? 'wrap' : 'nowrap' }}>
         <button
           onClick={() => setActiveTab('about')}
           style={{
-            padding: '12px 30px',
+            padding: isMobile ? '8px 15px' : isTablet ? '10px 20px' : '12px 30px',
             backgroundColor: activeTab === 'about' ? 'rgba(55, 55, 55, 0.9)' : 'rgba(200, 200, 200, 0.6)',
             color: activeTab === 'about' ? '#fff' : '#111',
             border: 'none',
             borderRadius: '8px 8px 0 0',
             cursor: 'pointer',
-            fontSize: '1rem',
+            fontSize: isMobile ? '0.85rem' : '1rem',
             fontWeight: activeTab === 'about' ? 'bold' : 'normal',
-            transition: 'all 0.3s ease'
+            transition: 'all 0.3s ease',
+            flex: isMobile ? '1' : 'none'
           }}
         >
           About
@@ -128,15 +187,16 @@ export default function Home() {
         <button
           onClick={() => setActiveTab('gallery')}
           style={{
-            padding: '12px 30px',
+            padding: isMobile ? '8px 15px' : isTablet ? '10px 20px' : '12px 30px',
             backgroundColor: activeTab === 'gallery' ? 'rgba(55, 55, 55, 0.9)' : 'rgba(200, 200, 200, 0.6)',
             color: activeTab === 'gallery' ? '#fff' : '#111',
             border: 'none',
             borderRadius: '8px 8px 0 0',
             cursor: 'pointer',
-            fontSize: '1rem',
+            fontSize: isMobile ? '0.85rem' : '1rem',
             fontWeight: activeTab === 'gallery' ? 'bold' : 'normal',
-            transition: 'all 0.3s ease'
+            transition: 'all 0.3s ease',
+            flex: isMobile ? '1' : 'none'
           }}
         >
           Gallery
@@ -144,25 +204,26 @@ export default function Home() {
         <button
           onClick={() => setActiveTab('socials')}
           style={{
-            padding: '12px 30px',
+            padding: isMobile ? '8px 15px' : isTablet ? '10px 20px' : '12px 30px',
             backgroundColor: activeTab === 'socials' ? 'rgba(55, 55, 55, 0.9)' : 'rgba(200, 200, 200, 0.6)',
             color: activeTab === 'socials' ? '#fff' : '#111',
             border: 'none',
             borderRadius: '8px 8px 0 0',
             cursor: 'pointer',
-            fontSize: '1rem',
+            fontSize: isMobile ? '0.85rem' : '1rem',
             fontWeight: activeTab === 'socials' ? 'bold' : 'normal',
-            transition: 'all 0.3s ease'
+            transition: 'all 0.3s ease',
+            flex: isMobile ? '1' : 'none'
           }}
         >
           Socials
         </button>
       </div>
 
-      <div style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto', backgroundColor: 'rgba(55, 55, 55, 0.8)', borderRadius: '0 0 12px 12px', backdropFilter: 'blur(10px)', minHeight: '400px' }}>
+      <div style={{ padding: isMobile ? '20px 10px' : isTablet ? '30px 15px' : '40px 20px', maxWidth: '1200px', margin: '0 auto', backgroundColor: 'rgba(55, 55, 55, 0.8)', borderRadius: '0 0 12px 12px', backdropFilter: 'blur(10px)', minHeight: isMobile ? '300px' : '400px' }}>
         {activeTab === 'about' && (
-          <div style={{ display: 'flex', gap: '40px' }}>
-            <div style={{ flex: 1, color: '#fff' }}>
+          <div style={{ display: 'flex', flexDirection: isMobile || isTablet ? 'column' : 'row', gap: isMobile ? '20px' : '40px' }}>
+            <div style={{ flex: 1, color: '#fff', fontSize: isMobile ? '0.9rem' : '1rem' }}>
           <p style={{ color: '#fff' }}>
             I am a freelance digital artist who has been working with multiple individual clients since 2020, gaining practical experience through a wide range of commissioned projects. My artistic journey began at a very young age, as I have been drawing since I was six years old. What started as a childhood hobby gradually became a serious pursuit when I was around fifteen, and by the age of eighteen, I began formally studying digital art to further develop my technical and creative skills. Over the years, I have learned how to work closely with clients, interpret creative direction, manage deadlines, and deliver high-quality artwork that balances artistic vision with client expectations. These experiences have helped shape me not only as an artist, but also as a professional who values clear communication, consistency, and continuous improvement.
           </p>
@@ -170,8 +231,8 @@ export default function Home() {
             My main specialties are character design and character illustration, where I focus on creating expressive, visually compelling characters that communicate personality, emotion, and story. I am currently expanding my creative abilities by studying both 2D and 3D animation, which has strengthened my understanding of movement, timing, and visual storytelling. This background in animation allows me to design characters that feel more dynamic and adaptable across different media, from static illustrations to animated sequences. As I continue to grow, my goal is to become a more versatile and well-rounded digital artist, combining my strengths in illustration and animation to contribute to a wide range of creative projects while continuing to refine my craft and develop my personal artistic style.
           </p>
         </div>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '20px' }}>
-          <div style={{ position: 'relative', height: '500px', width: '100%', borderRadius: '8px', overflow: 'hidden' }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: isMobile ? '10px' : '20px' }}>
+          <div style={{ position: 'relative', height: isMobile ? '300px' : isTablet ? '400px' : '500px', width: '100%', borderRadius: '8px', overflow: 'hidden' }}>
             <div 
               style={{ 
                 position: 'absolute', 
@@ -199,10 +260,14 @@ export default function Home() {
               />
             </div>
           </div>
-          <div style={{ display: 'flex', gap: '15px', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', gap: isMobile ? '8px' : '15px', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
             <button
               onClick={handlePrevious}
-              style={buttonStyle}
+              style={{
+                ...buttonStyle,
+                padding: isMobile ? '8px 12px' : '10px 20px',
+                fontSize: isMobile ? '0.85rem' : '1rem'
+              }}
               onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#fff'; e.currentTarget.style.color = '#000'; }}
               onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#333'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.transform = 'scale(1)'; }}
               onMouseDown={(e) => { e.currentTarget.style.transform = 'scale(0.97)'; }}
@@ -210,12 +275,16 @@ export default function Home() {
             >
               ← Previous
             </button>
-            <span style={{ alignSelf: 'center', fontWeight: 'bold', color: '#fff' }}>
+            <span style={{ alignSelf: 'center', fontWeight: 'bold', color: '#fff', fontSize: isMobile ? '0.85rem' : '1rem' }}>
               {currentImageIndex + 1} / {featuredImages.length}
             </span>
             <button
               onClick={handleNext}
-              style={buttonStyle}
+              style={{
+                ...buttonStyle,
+                padding: isMobile ? '8px 12px' : '10px 20px',
+                fontSize: isMobile ? '0.85rem' : '1rem'
+              }}
               onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#fff'; e.currentTarget.style.color = '#000'; }}
               onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#333'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.transform = 'scale(1)'; }}
               onMouseDown={(e) => { e.currentTarget.style.transform = 'scale(0.97)'; }}
@@ -229,14 +298,14 @@ export default function Home() {
         )}
         
         {activeTab === 'gallery' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px', padding: '20px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(auto-fill, minmax(250px, 1fr))', gap: isMobile ? '15px' : '20px', padding: isMobile ? '10px' : '20px' }}>
             {portfolioItems.map((item, index) => (
               <div 
                 key={item.id}
                 onClick={() => { setCurrentImageIndex(index); setIsModalOpen(true); }}
                 style={{ 
                   position: 'relative', 
-                  height: '250px', 
+                  height: isMobile ? '200px' : '250px', 
                   borderRadius: '8px', 
                   overflow: 'hidden',
                   cursor: 'pointer',
@@ -258,16 +327,16 @@ export default function Home() {
         )}
         
         {activeTab === 'socials' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', padding: '20px' }}>
-            <h2 style={{ color: '#fff', fontSize: '1.5rem', marginBottom: '10px', textAlign: 'center' }}>Connect With Me</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '30px', maxWidth: '1100px', margin: '0 auto', width: '100%' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '15px' : '30px', padding: isMobile ? '10px' : '20px' }}>
+            <h2 style={{ color: '#fff', fontSize: isMobile ? '1.2rem' : '1.5rem', marginBottom: '10px', textAlign: 'center' }}>Connect With Me</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(350px, 1fr))', gap: isMobile ? '20px' : '30px', maxWidth: '1100px', margin: '0 auto', width: '100%' }}>
               
               {/* X/Twitter Card with Embed */}
               <div
                 style={{
                   backgroundColor: 'rgba(0, 0, 0, 0.6)',
                   borderRadius: '12px',
-                  padding: '20px',
+                  padding: isMobile ? '15px' : '20px',
                   border: '2px solid rgba(29, 155, 240, 0.5)',
                   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
                   display: 'flex',
@@ -275,11 +344,11 @@ export default function Home() {
                   gap: '15px'
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '10px' }}>
-                  <div style={{ fontSize: '2rem' }}>𝕏</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '10px' : '15px', marginBottom: '10px' }}>
+                  <div style={{ fontSize: isMobile ? '1.5rem' : '2rem' }}>𝕏</div>
                   <div>
-                    <h3 style={{ margin: '0', fontSize: '1.2rem', color: '#1DA1F2' }}>X (Twitter)</h3>
-                    <p style={{ margin: '5px 0 0 0', fontSize: '0.9rem', color: '#aaa' }}>@The_Artspear</p>
+                    <h3 style={{ margin: '0', fontSize: isMobile ? '1rem' : '1.2rem', color: '#1DA1F2' }}>X (Twitter)</h3>
+                    <p style={{ margin: '5px 0 0 0', fontSize: isMobile ? '0.8rem' : '0.9rem', color: '#aaa' }}>@The_Artspear</p>
                   </div>
                 </div>
                 <div style={{ 
@@ -328,7 +397,7 @@ export default function Home() {
                 style={{
                   backgroundColor: 'rgba(0, 0, 0, 0.6)',
                   borderRadius: '12px',
-                  padding: '20px',
+                  padding: isMobile ? '15px' : '20px',
                   border: '2px solid rgba(225, 48, 108, 0.5)',
                   boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
                   display: 'flex',
@@ -336,11 +405,11 @@ export default function Home() {
                   gap: '15px'
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '10px' }}>
-                  <div style={{ fontSize: '2rem' }}>📷</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '10px' : '15px', marginBottom: '10px' }}>
+                  <div style={{ fontSize: isMobile ? '1.5rem' : '2rem' }}>📷</div>
                   <div>
-                    <h3 style={{ margin: '0', fontSize: '1.2rem', background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Instagram</h3>
-                    <p style={{ margin: '5px 0 0 0', fontSize: '0.9rem', color: '#aaa' }}>@the_artspear</p>
+                    <h3 style={{ margin: '0', fontSize: isMobile ? '1rem' : '1.2rem', background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Instagram</h3>
+                    <p style={{ margin: '5px 0 0 0', fontSize: isMobile ? '0.8rem' : '0.9rem', color: '#aaa' }}>@the_artspear</p>
                   </div>
                 </div>
                 <div style={{ 
@@ -380,6 +449,180 @@ export default function Home() {
               </div>
               
             </div>
+
+            {/* Contact Form */}
+            <div style={{ marginTop: isMobile ? '30px' : '50px', maxWidth: '800px', margin: '50px auto 0' }}>
+              <h2 style={{ color: '#fff', fontSize: isMobile ? '1.5rem' : '2rem', marginBottom: '20px', textAlign: 'center' }}>📧 Contact Me</h2>
+              <form onSubmit={handleContactSubmit} style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '15px' : '20px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '15px' : '20px' }}>
+                  <div>
+                    <label htmlFor="firstName" style={{ display: 'block', color: '#fff', marginBottom: '8px', fontSize: isMobile ? '0.9rem' : '1rem' }}>
+                      First Name <span style={{ color: '#ff6b6b' }}>*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="firstName"
+                      name="firstName"
+                      value={contactForm.firstName}
+                      onChange={handleContactChange}
+                      required
+                      style={{
+                        width: '100%',
+                        padding: isMobile ? '10px' : '12px',
+                        borderRadius: '8px',
+                        border: '2px solid rgba(255, 255, 255, 0.2)',
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        color: '#fff',
+                        fontSize: isMobile ? '0.9rem' : '1rem',
+                        outline: 'none',
+                        transition: 'border-color 0.3s ease'
+                      }}
+                      onFocus={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)'}
+                      onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="lastName" style={{ display: 'block', color: '#fff', marginBottom: '8px', fontSize: isMobile ? '0.9rem' : '1rem' }}>
+                      Last Name <span style={{ color: '#ff6b6b' }}>*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="lastName"
+                      name="lastName"
+                      value={contactForm.lastName}
+                      onChange={handleContactChange}
+                      required
+                      style={{
+                        width: '100%',
+                        padding: isMobile ? '10px' : '12px',
+                        borderRadius: '8px',
+                        border: '2px solid rgba(255, 255, 255, 0.2)',
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        color: '#fff',
+                        fontSize: isMobile ? '0.9rem' : '1rem',
+                        outline: 'none',
+                        transition: 'border-color 0.3s ease'
+                      }}
+                      onFocus={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)'}
+                      onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="email" style={{ display: 'block', color: '#fff', marginBottom: '8px', fontSize: isMobile ? '0.9rem' : '1rem' }}>
+                    Email Address <span style={{ color: '#ff6b6b' }}>*</span>
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={contactForm.email}
+                    onChange={handleContactChange}
+                    required
+                    style={{
+                      width: '100%',
+                      padding: isMobile ? '10px' : '12px',
+                      borderRadius: '8px',
+                      border: '2px solid rgba(255, 255, 255, 0.2)',
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      color: '#fff',
+                      fontSize: isMobile ? '0.9rem' : '1rem',
+                      outline: 'none',
+                      transition: 'border-color 0.3s ease'
+                    }}
+                    onFocus={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)'}
+                    onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="subject" style={{ display: 'block', color: '#fff', marginBottom: '8px', fontSize: isMobile ? '0.9rem' : '1rem' }}>
+                    Subject <span style={{ color: '#ff6b6b' }}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="subject"
+                    name="subject"
+                    value={contactForm.subject}
+                    onChange={handleContactChange}
+                    required
+                    style={{
+                      width: '100%',
+                      padding: isMobile ? '10px' : '12px',
+                      borderRadius: '8px',
+                      border: '2px solid rgba(255, 255, 255, 0.2)',
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      color: '#fff',
+                      fontSize: isMobile ? '0.9rem' : '1rem',
+                      outline: 'none',
+                      transition: 'border-color 0.3s ease'
+                    }}
+                    onFocus={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)'}
+                    onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="message" style={{ display: 'block', color: '#fff', marginBottom: '8px', fontSize: isMobile ? '0.9rem' : '1rem' }}>
+                    Message <span style={{ color: '#ff6b6b' }}>*</span>
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    value={contactForm.message}
+                    onChange={handleContactChange}
+                    required
+                    rows={isMobile ? 4 : 6}
+                    style={{
+                      width: '100%',
+                      padding: isMobile ? '10px' : '12px',
+                      borderRadius: '8px',
+                      border: '2px solid rgba(255, 255, 255, 0.2)',
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      color: '#fff',
+                      fontSize: isMobile ? '0.9rem' : '1rem',
+                      outline: 'none',
+                      transition: 'border-color 0.3s ease',
+                      resize: 'vertical',
+                      fontFamily: 'inherit'
+                    }}
+                    onFocus={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)'}
+                    onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'}
+                  />
+                </div>
+                {submitStatus && (
+                  <div style={{
+                    padding: isMobile ? '10px' : '12px',
+                    borderRadius: '8px',
+                    backgroundColor: submitStatus.type === 'success' ? 'rgba(72, 187, 120, 0.2)' : 'rgba(245, 101, 101, 0.2)',
+                    border: `2px solid ${submitStatus.type === 'success' ? 'rgba(72, 187, 120, 0.5)' : 'rgba(245, 101, 101, 0.5)'}`,
+                    color: '#fff',
+                    textAlign: 'center',
+                    fontSize: isMobile ? '0.9rem' : '1rem'
+                  }}>
+                    {submitStatus.message}
+                  </div>
+                )}
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  style={{
+                    padding: isMobile ? '12px 24px' : '15px 30px',
+                    backgroundColor: isSubmitting ? 'rgba(100, 100, 100, 0.5)' : '#4CAF50',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: isMobile ? '1rem' : '1.1rem',
+                    fontWeight: 'bold',
+                    cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.3s ease',
+                    opacity: isSubmitting ? 0.6 : 1
+                  }}
+                  onMouseEnter={(e) => { if (!isSubmitting) e.currentTarget.style.backgroundColor = '#45a049'; }}
+                  onMouseLeave={(e) => { if (!isSubmitting) e.currentTarget.style.backgroundColor = '#4CAF50'; }}
+                >
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
+                </button>
+              </form>
+            </div>
           </div>
         )}
       </div>
@@ -396,7 +639,7 @@ export default function Home() {
             alignItems: 'center',
             justifyContent: 'center',
             zIndex: 9999,
-            padding: '20px'
+            padding: isMobile ? '10px' : '20px'
           }}
           onClick={() => setIsModalOpen(false)}
         >
@@ -404,14 +647,14 @@ export default function Home() {
             onClick={() => setIsModalOpen(false)}
             style={{
               position: 'absolute',
-              top: '20px',
-              right: '20px',
+              top: isMobile ? '10px' : '20px',
+              right: isMobile ? '10px' : '20px',
               backgroundColor: 'rgba(255, 255, 255, 0.9)',
               border: 'none',
               borderRadius: '50%',
-              width: '50px',
-              height: '50px',
-              fontSize: '24px',
+              width: isMobile ? '40px' : '50px',
+              height: isMobile ? '40px' : '50px',
+              fontSize: isMobile ? '18px' : '24px',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -430,15 +673,15 @@ export default function Home() {
             onClick={(e) => { e.stopPropagation(); handlePrevious(); }}
             style={{
               position: 'absolute',
-              left: '20px',
+              left: isMobile ? '10px' : '20px',
               top: '50%',
               transform: 'translateY(-50%)',
               backgroundColor: 'rgba(255, 255, 255, 0.9)',
               border: 'none',
               borderRadius: '50%',
-              width: '60px',
-              height: '60px',
-              fontSize: '24px',
+              width: isMobile ? '40px' : '60px',
+              height: isMobile ? '40px' : '60px',
+              fontSize: isMobile ? '16px' : '24px',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -457,15 +700,15 @@ export default function Home() {
             onClick={(e) => { e.stopPropagation(); handleNext(); }}
             style={{
               position: 'absolute',
-              right: '20px',
+              right: isMobile ? '10px' : '20px',
               top: '50%',
               transform: 'translateY(-50%)',
               backgroundColor: 'rgba(255, 255, 255, 0.9)',
               border: 'none',
               borderRadius: '50%',
-              width: '60px',
-              height: '60px',
-              fontSize: '24px',
+              width: isMobile ? '40px' : '60px',
+              height: isMobile ? '40px' : '60px',
+              fontSize: isMobile ? '16px' : '24px',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -480,7 +723,7 @@ export default function Home() {
           >
             →
           </button>
-          <div style={{ position: 'relative', width: '90vw', height: '90vh', maxWidth: '1400px', maxHeight: '900px' }} onClick={(e) => e.stopPropagation()}>
+          <div style={{ position: 'relative', width: isMobile ? '85vw' : '90vw', height: isMobile ? '70vh' : '90vh', maxWidth: '1400px', maxHeight: '900px' }} onClick={(e) => e.stopPropagation()}>
             <Image
               src={featuredImages[currentImageIndex].image}
               alt={featuredImages[currentImageIndex].title}
@@ -489,7 +732,7 @@ export default function Home() {
               priority
             />
           </div>
-          <div style={{ position: 'absolute', bottom: '30px', color: '#fff', fontSize: '18px', fontWeight: 'bold', zIndex: 10000 }}>
+          <div style={{ position: 'absolute', bottom: isMobile ? '15px' : '30px', color: '#fff', fontSize: isMobile ? '14px' : '18px', fontWeight: 'bold', zIndex: 10000 }}>
             {currentImageIndex + 1} / {featuredImages.length}
           </div>
         </div>
