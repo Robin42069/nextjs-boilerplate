@@ -99,21 +99,23 @@ export default function Home() {
     setSubmitStatus(null);
 
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(contactForm),
-      });
+      const formData = new FormData();
+      formData.append('_captcha', 'false');
+      formData.append('name', `${contactForm.firstName} ${contactForm.lastName}`);
+      formData.append('email', contactForm.email);
+      formData.append('subject', contactForm.subject);
+      formData.append('message', contactForm.message);
 
-      const data = await response.json();
+      const response = await fetch('https://formsubmit.co/robinjohnaranguiz@gmail.com', {
+        method: 'POST',
+        body: formData,
+      });
 
       if (response.ok) {
         setSubmitStatus({ type: 'success', message: 'Message sent successfully! I\'ll get back to you soon.' });
         setContactForm({ firstName: '', lastName: '', email: '', subject: '', message: '' });
       } else {
-        setSubmitStatus({ type: 'error', message: data.error || 'Failed to send message. Please try again.' });
+        setSubmitStatus({ type: 'error', message: 'Failed to send message. Please try again.' });
       }
     } catch (error) {
       setSubmitStatus({ type: 'error', message: 'An error occurred. Please try again later.' });
