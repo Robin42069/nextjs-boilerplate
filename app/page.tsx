@@ -11,15 +11,6 @@ export default function Home() {
   const [portfolioItems, setPortfolioItems] = useState<Array<{id: number, title: string, image: string}>>([]);
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
-  const [contactForm, setContactForm] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
 
   const featuredImages = [
     { id: 1, title: 'Insanity', image: '/gallery/Insanity.jpg' },
@@ -91,44 +82,6 @@ export default function Home() {
 
   const handleNext = () => {
     setCurrentImageIndex((prev) => prev === featuredImages.length - 1 ? 0 : prev + 1);
-  };
-
-  const handleContactSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitStatus(null);
-
-    try {
-      const formData = new FormData();
-      formData.append('_captcha', 'false');
-      formData.append('name', `${contactForm.firstName} ${contactForm.lastName}`);
-      formData.append('email', contactForm.email);
-      formData.append('subject', contactForm.subject);
-      formData.append('message', contactForm.message);
-
-      const response = await fetch('https://formsubmit.co/robinjohnaranguiz@gmail.com', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (response.ok) {
-        setSubmitStatus({ type: 'success', message: 'Message sent successfully! I\'ll get back to you soon.' });
-        setContactForm({ firstName: '', lastName: '', email: '', subject: '', message: '' });
-      } else {
-        setSubmitStatus({ type: 'error', message: 'Failed to send message. Please try again.' });
-      }
-    } catch (error) {
-      setSubmitStatus({ type: 'error', message: 'An error occurred. Please try again later.' });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleContactChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setContactForm({
-      ...contactForm,
-      [e.target.name]: e.target.value
-    });
   };
 
   const bannerOpacity = Math.max(0, Math.min(1, 1 - scrollY / 400));
@@ -455,18 +408,16 @@ export default function Home() {
             {/* Contact Form */}
             <div style={{ marginTop: isMobile ? '30px' : '50px', maxWidth: '800px', margin: '50px auto 0' }}>
               <h2 style={{ color: '#fff', fontSize: isMobile ? '1.5rem' : '2rem', marginBottom: '20px', textAlign: 'center' }}>📧 Contact Me</h2>
-              <form onSubmit={handleContactSubmit} style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '15px' : '20px' }}>
+              <form action="https://formsubmit.co/robinjohnaranguiz@gmail.com" method="POST" style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '15px' : '20px' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '15px' : '20px' }}>
                   <div>
-                    <label htmlFor="firstName" style={{ display: 'block', color: '#fff', marginBottom: '8px', fontSize: isMobile ? '0.9rem' : '1rem' }}>
-                      First Name <span style={{ color: '#ff6b6b' }}>*</span>
+                    <label htmlFor="name" style={{ display: 'block', color: '#fff', marginBottom: '8px', fontSize: isMobile ? '0.9rem' : '1rem' }}>
+                      Full Name <span style={{ color: '#ff6b6b' }}>*</span>
                     </label>
                     <input
                       type="text"
-                      id="firstName"
-                      name="firstName"
-                      value={contactForm.firstName}
-                      onChange={handleContactChange}
+                      id="name"
+                      name="name"
                       required
                       style={{
                         width: '100%',
@@ -484,15 +435,13 @@ export default function Home() {
                     />
                   </div>
                   <div>
-                    <label htmlFor="lastName" style={{ display: 'block', color: '#fff', marginBottom: '8px', fontSize: isMobile ? '0.9rem' : '1rem' }}>
-                      Last Name <span style={{ color: '#ff6b6b' }}>*</span>
+                    <label htmlFor="email" style={{ display: 'block', color: '#fff', marginBottom: '8px', fontSize: isMobile ? '0.9rem' : '1rem' }}>
+                      Email Address <span style={{ color: '#ff6b6b' }}>*</span>
                     </label>
                     <input
-                      type="text"
-                      id="lastName"
-                      name="lastName"
-                      value={contactForm.lastName}
-                      onChange={handleContactChange}
+                      type="email"
+                      id="email"
+                      name="email"
                       required
                       style={{
                         width: '100%',
@@ -509,32 +458,6 @@ export default function Home() {
                       onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'}
                     />
                   </div>
-                </div>
-                <div>
-                  <label htmlFor="email" style={{ display: 'block', color: '#fff', marginBottom: '8px', fontSize: isMobile ? '0.9rem' : '1rem' }}>
-                    Email Address <span style={{ color: '#ff6b6b' }}>*</span>
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={contactForm.email}
-                    onChange={handleContactChange}
-                    required
-                    style={{
-                      width: '100%',
-                      padding: isMobile ? '10px' : '12px',
-                      borderRadius: '8px',
-                      border: '2px solid rgba(255, 255, 255, 0.2)',
-                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                      color: '#fff',
-                      fontSize: isMobile ? '0.9rem' : '1rem',
-                      outline: 'none',
-                      transition: 'border-color 0.3s ease'
-                    }}
-                    onFocus={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)'}
-                    onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'}
-                  />
                 </div>
                 <div>
                   <label htmlFor="subject" style={{ display: 'block', color: '#fff', marginBottom: '8px', fontSize: isMobile ? '0.9rem' : '1rem' }}>
@@ -544,8 +467,6 @@ export default function Home() {
                     type="text"
                     id="subject"
                     name="subject"
-                    value={contactForm.subject}
-                    onChange={handleContactChange}
                     required
                     style={{
                       width: '100%',
@@ -569,8 +490,6 @@ export default function Home() {
                   <textarea
                     id="message"
                     name="message"
-                    value={contactForm.message}
-                    onChange={handleContactChange}
                     required
                     rows={isMobile ? 4 : 6}
                     style={{
@@ -590,38 +509,24 @@ export default function Home() {
                     onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'}
                   />
                 </div>
-                {submitStatus && (
-                  <div style={{
-                    padding: isMobile ? '10px' : '12px',
-                    borderRadius: '8px',
-                    backgroundColor: submitStatus.type === 'success' ? 'rgba(72, 187, 120, 0.2)' : 'rgba(245, 101, 101, 0.2)',
-                    border: `2px solid ${submitStatus.type === 'success' ? 'rgba(72, 187, 120, 0.5)' : 'rgba(245, 101, 101, 0.5)'}`,
-                    color: '#fff',
-                    textAlign: 'center',
-                    fontSize: isMobile ? '0.9rem' : '1rem'
-                  }}>
-                    {submitStatus.message}
-                  </div>
-                )}
+                <input type="hidden" name="_captcha" value="false" />
                 <button
                   type="submit"
-                  disabled={isSubmitting}
                   style={{
                     padding: isMobile ? '12px 24px' : '15px 30px',
-                    backgroundColor: isSubmitting ? 'rgba(100, 100, 100, 0.5)' : '#4CAF50',
+                    backgroundColor: '#4CAF50',
                     color: '#fff',
                     border: 'none',
                     borderRadius: '8px',
                     fontSize: isMobile ? '1rem' : '1.1rem',
                     fontWeight: 'bold',
-                    cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                    transition: 'all 0.3s ease',
-                    opacity: isSubmitting ? 0.6 : 1
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
                   }}
-                  onMouseEnter={(e) => { if (!isSubmitting) e.currentTarget.style.backgroundColor = '#45a049'; }}
-                  onMouseLeave={(e) => { if (!isSubmitting) e.currentTarget.style.backgroundColor = '#4CAF50'; }}
+                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#45a049'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#4CAF50'; }}
                 >
-                  {isSubmitting ? 'Sending...' : 'Send Message'}
+                  Send Message
                 </button>
               </form>
             </div>
