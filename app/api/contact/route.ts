@@ -1,4 +1,4 @@
-mport { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import * as nodemailer from 'nodemailer';
 
 export async function POST(request: NextRequest) {
