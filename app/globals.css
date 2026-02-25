@@ -1,26 +1,551 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
+  --bg: #0b0d12;
+  --bg-strong: #0f1320;
+  --surface: rgba(16, 19, 29, 0.85);
+  --surface-strong: #141a28;
+  --text: #f8fafc;
+  --muted: #94a3b8;
+  --accent: #8b5cf6;
+  --accent-2: #22d3ee;
+  --border: rgba(148, 163, 184, 0.18);
+  --glow: rgba(139, 92, 246, 0.35);
+  --shadow: 0 20px 60px rgba(0, 0, 0, 0.55);
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 12px;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  background: radial-gradient(circle at top, rgba(139, 92, 246, 0.12), transparent 45%),
+    radial-gradient(circle at 10% 20%, rgba(34, 211, 238, 0.12), transparent 50%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--font-geist-sans), "Inter", system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+}
+
+.page {
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.heroBackdrop {
+  width: 100%;
+  background-size: cover;
+  background-position: 50% 80%;
+  filter: saturate(1.1) contrast(1.05);
+  transition: transform 0.6s ease-out, opacity 0.8s ease-out;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 20px 16px;
+  margin-top: -70px;
+}
+
+.avatarWrap {
+  padding: 6px;
+  border-radius: 50%;
+  background: linear-gradient(140deg, rgba(139, 92, 246, 0.8), rgba(34, 211, 238, 0.6));
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+}
+
+.avatar {
+  border-radius: 50%;
+  border: 4px solid rgba(15, 18, 30, 0.85);
+}
+
+.heroText {
+  text-align: center;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+.title {
+  margin: 8px 0 4px;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 600;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 24px 16px 0;
+}
+
+.tabButton {
+  padding: 12px 28px;
+  background: rgba(15, 18, 30, 0.85);
+  color: var(--muted);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tabButton:hover {
+  color: var(--text);
+  border-color: rgba(139, 92, 246, 0.35);
+}
+
+.tabButton.active {
+  color: var(--text);
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(34, 211, 238, 0.2));
+  border-color: rgba(139, 92, 246, 0.65);
+  box-shadow: 0 10px 30px rgba(139, 92, 246, 0.25);
+}
+
+.panel {
+  max-width: 1200px;
+  margin: 24px auto 0;
+  padding: clamp(20px, 4vw, 40px);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+.aboutGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(24px, 5vw, 48px);
+}
+
+.aboutCopy {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  font-size: 0.98rem;
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.pillRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.pill {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(139, 92, 246, 0.15);
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  font-size: 0.8rem;
+  color: var(--text);
+}
+
+.carousel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.carouselFrame {
+  position: relative;
+  width: 100%;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--surface-strong);
+  border: 1px solid var(--border);
+}
+
+.carouselBlur {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(30px) saturate(1.2);
+  opacity: 0.6;
+}
+
+.carouselImageWrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.carouselImage {
+  object-fit: contain;
+}
+
+.carouselControls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.carouselCounter {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 22px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: rgba(139, 92, 246, 0.15);
+  color: var(--text);
+}
+
+.button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(139, 92, 246, 0.2);
+}
+
+.button.ghost {
+  background: rgba(15, 18, 30, 0.85);
+  border-color: var(--border);
+}
+
+.button.primary {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.85), rgba(34, 211, 238, 0.8));
+  border-color: rgba(139, 92, 246, 0.65);
+  font-weight: 600;
+}
+
+.button.brand {
+  background: rgba(29, 155, 240, 0.85);
+  border-color: rgba(29, 155, 240, 0.8);
+}
+
+.button.brand.gradient {
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.galleryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 20px;
+}
+
+.galleryCard {
+  position: relative;
+  height: 250px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--surface-strong);
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.galleryCard:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.4);
+}
+
+.galleryImage {
+  object-fit: cover;
+}
+
+.galleryOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  padding: 16px;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.7));
+  color: #fff;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.galleryCard:hover .galleryOverlay {
+  opacity: 1;
+}
+
+.socials {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.sectionTitle {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(1.4rem, 2.8vw, 2rem);
+}
+
+.socialGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.socialCard {
+  background: rgba(10, 12, 20, 0.85);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.socialCard.twitter {
+  border-color: rgba(29, 155, 240, 0.35);
+}
+
+.socialCard.instagram {
+  border-color: rgba(225, 48, 108, 0.35);
+}
+
+.socialHeader {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.socialHeader h3 {
+  margin: 0;
+}
+
+.socialHeader p {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+.socialIcon {
+  font-size: 1.8rem;
+}
+
+.socialEmbed {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.socialEmbed iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+}
+
+.contactCard {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 28px;
+  background: rgba(10, 12, 20, 0.8);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+}
+
+.contactForm {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.field span {
+  color: var(--muted);
+}
+
+.field em {
+  color: #f87171;
+  font-style: normal;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: rgba(15, 18, 30, 0.8);
+  color: var(--text);
+  font: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: rgba(139, 92, 246, 0.6);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 6, 10, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.modalImage {
+  position: relative;
+  width: min(90vw, 1400px);
+  height: min(90vh, 900px);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.modalImageContent {
+  object-fit: contain;
+}
+
+.modalButton {
+  position: absolute;
+  background: rgba(15, 18, 30, 0.9);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  width: 44px;
+  height: 44px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.modalButton:hover {
+  transform: scale(1.08);
+  background: rgba(30, 41, 59, 0.95);
+}
+
+.modalButton.close {
+  top: 20px;
+  right: 20px;
+}
+
+.modalButton.prev {
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.modalButton.prev:hover {
+  transform: translateY(-50%) scale(1.08);
+}
+
+.modalButton.next {
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.modalButton.next:hover {
+  transform: translateY(-50%) scale(1.08);
+}
+
+.modalCounter {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--text);
+  font-weight: 600;
+}
+
+@media (max-width: 1024px) {
+  .aboutGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .heroContent {
+    margin-top: -50px;
+  }
+}
+
+@media (max-width: 768px) {
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+
+  .galleryCard {
+    height: 210px;
+  }
+
+  .modalButton {
+    width: 40px;
+    height: 40px;
+  }
 }

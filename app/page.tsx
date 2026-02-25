@@ -1,14 +1,14 @@
 'use client';
 
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('about');
-  const [portfolioItems, setPortfolioItems] = useState<Array<{id: number, title: string, image: string}>>([]);
+  const [portfolioItems, setPortfolioItems] = useState<Array<{ id: number; title: string; image: string }>>([]);
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
 
@@ -35,7 +35,7 @@ export default function Home() {
         console.error('Failed to load gallery images:', error);
       }
     };
-    
+
     fetchGalleryImages();
   }, []);
 
@@ -77,250 +77,166 @@ export default function Home() {
   }, [isModalOpen, currentImageIndex]);
 
   const handlePrevious = () => {
-    setCurrentImageIndex((prev) => prev === 0 ? featuredImages.length - 1 : prev - 1);
+    setCurrentImageIndex((prev) => (prev === 0 ? featuredImages.length - 1 : prev - 1));
   };
 
   const handleNext = () => {
-    setCurrentImageIndex((prev) => prev === featuredImages.length - 1 ? 0 : prev + 1);
+    setCurrentImageIndex((prev) => (prev === featuredImages.length - 1 ? 0 : prev + 1));
   };
 
   const bannerOpacity = Math.max(0, Math.min(1, 1 - scrollY / 400));
 
-  const buttonStyle = {
-    padding: '10px 20px',
-    backgroundColor: '#333',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-    fontSize: '1rem',
-    transition: 'background-color 0.2s ease, color 0.2s ease, transform 0.1s ease'
-  } as const;
-
   return (
-    <div style={{ backgroundColor: '#f8f8f8', color: '#111', minHeight: '100vh' }}>
-      <div style={{
-        backgroundImage: 'url(/images/DREAMS.png)',
-        backgroundSize: 'cover',
-        backgroundPosition: '50% 80%',
-        height: isMobile ? '200px' : isTablet ? '300px' : '400px',
-        width: '100%',
-        transform: `translateY(${-scrollY * (isMobile ? 0.5 : 1.5)}px)`,
-        opacity: bannerOpacity,
-        transition: 'transform 0.6s ease-out, opacity 0.8s ease-out'
-      }}></div>
-      <div style={{ display: 'flex', justifyContent: 'center', padding: isMobile ? '10px' : '20px' }}>
-        <Image
-          src="/images/Strings PATCH CROP PFP.png"
-          alt="Profile Picture"
-          width={isMobile ? 100 : 150}
-          height={isMobile ? 100 : 150}
-          style={{ borderRadius: '50%' }}
+    <div className="page">
+      <header className="hero">
+        <div
+          className="heroBackdrop"
+          style={{
+            backgroundImage: 'url(/images/DREAMS.png)',
+            height: isMobile ? '220px' : isTablet ? '320px' : '420px',
+            transform: `translateY(${-scrollY * (isMobile ? 0.5 : 1.2)}px)`,
+            opacity: bannerOpacity,
+          }}
         />
-      </div>
-      <h1 style={{ textAlign: 'center', fontFamily: 'Georgia, serif', fontSize: isMobile ? '1.5rem' : '2rem', margin: '10px 0', color: '#111' }}>Artspear</h1>
-      <p style={{ textAlign: 'center', fontSize: isMobile ? '0.7rem' : '0.8rem', margin: '0 20px', color: '#111' }}>Digital Artist/Illustrator/Character Designer</p>
-      
-      <div style={{ display: 'flex', justifyContent: 'center', gap: isMobile ? '5px' : '10px', margin: isMobile ? '15px 10px 10px' : '30px 20px 20px', maxWidth: '1200px', marginLeft: 'auto', marginRight: 'auto', flexWrap: isMobile ? 'wrap' : 'nowrap' }}>
+        <div className="heroContent">
+          <div className="avatarWrap">
+            <Image
+              src="/images/Strings PATCH CROP PFP.png"
+              alt="Profile Picture"
+              width={isMobile ? 110 : 160}
+              height={isMobile ? 110 : 160}
+              className="avatar"
+            />
+          </div>
+          <div className="heroText">
+            <span className="eyebrow">Digital Artist</span>
+            <h1 className="title">Artspear</h1>
+            <p className="subtitle">Illustrator • Character Designer • Visual Storyteller</p>
+          </div>
+        </div>
+      </header>
+
+      <nav className="tabs">
         <button
           onClick={() => setActiveTab('about')}
-          style={{
-            padding: isMobile ? '8px 15px' : isTablet ? '10px 20px' : '12px 30px',
-            backgroundColor: activeTab === 'about' ? 'rgba(55, 55, 55, 0.9)' : 'rgba(200, 200, 200, 0.6)',
-            color: activeTab === 'about' ? '#fff' : '#111',
-            border: 'none',
-            borderRadius: '8px 8px 0 0',
-            cursor: 'pointer',
-            fontSize: isMobile ? '0.85rem' : '1rem',
-            fontWeight: activeTab === 'about' ? 'bold' : 'normal',
-            transition: 'all 0.3s ease',
-            flex: isMobile ? '1' : 'none'
-          }}
+          className={`tabButton ${activeTab === 'about' ? 'active' : ''}`}
         >
           About
         </button>
         <button
           onClick={() => setActiveTab('gallery')}
-          style={{
-            padding: isMobile ? '8px 15px' : isTablet ? '10px 20px' : '12px 30px',
-            backgroundColor: activeTab === 'gallery' ? 'rgba(55, 55, 55, 0.9)' : 'rgba(200, 200, 200, 0.6)',
-            color: activeTab === 'gallery' ? '#fff' : '#111',
-            border: 'none',
-            borderRadius: '8px 8px 0 0',
-            cursor: 'pointer',
-            fontSize: isMobile ? '0.85rem' : '1rem',
-            fontWeight: activeTab === 'gallery' ? 'bold' : 'normal',
-            transition: 'all 0.3s ease',
-            flex: isMobile ? '1' : 'none'
-          }}
+          className={`tabButton ${activeTab === 'gallery' ? 'active' : ''}`}
         >
           Gallery
         </button>
         <button
           onClick={() => setActiveTab('socials')}
-          style={{
-            padding: isMobile ? '8px 15px' : isTablet ? '10px 20px' : '12px 30px',
-            backgroundColor: activeTab === 'socials' ? 'rgba(55, 55, 55, 0.9)' : 'rgba(200, 200, 200, 0.6)',
-            color: activeTab === 'socials' ? '#fff' : '#111',
-            border: 'none',
-            borderRadius: '8px 8px 0 0',
-            cursor: 'pointer',
-            fontSize: isMobile ? '0.85rem' : '1rem',
-            fontWeight: activeTab === 'socials' ? 'bold' : 'normal',
-            transition: 'all 0.3s ease',
-            flex: isMobile ? '1' : 'none'
-          }}
+          className={`tabButton ${activeTab === 'socials' ? 'active' : ''}`}
         >
           Socials
         </button>
-      </div>
+      </nav>
 
-      <div style={{ padding: isMobile ? '20px 10px' : isTablet ? '30px 15px' : '40px 20px', maxWidth: '1200px', margin: '0 auto', backgroundColor: 'rgba(55, 55, 55, 0.8)', borderRadius: '0 0 12px 12px', backdropFilter: 'blur(10px)', minHeight: isMobile ? '300px' : '400px' }}>
+      <section className="panel">
         {activeTab === 'about' && (
-          <div style={{ display: 'flex', flexDirection: isMobile || isTablet ? 'column' : 'row', gap: isMobile ? '20px' : '40px' }}>
-            <div style={{ flex: 1, color: '#fff', fontSize: isMobile ? '0.9rem' : '1rem' }}>
-          <p style={{ color: '#fff' }}>
-            I am a freelance digital artist who has been working with multiple individual clients since 2020, gaining practical experience through a wide range of commissioned projects. My artistic journey began at a very young age, as I have been drawing since I was six years old. What started as a childhood hobby gradually became a serious pursuit when I was around fifteen, and by the age of eighteen, I began formally studying digital art to further develop my technical and creative skills. Over the years, I have learned how to work closely with clients, interpret creative direction, manage deadlines, and deliver high-quality artwork that balances artistic vision with client expectations. These experiences have helped shape me not only as an artist, but also as a professional who values clear communication, consistency, and continuous improvement.
-          </p>
-          <p style={{ color: '#fff' }}>
-            My main specialties are character design and character illustration, where I focus on creating expressive, visually compelling characters that communicate personality, emotion, and story. I am currently expanding my creative abilities by studying both 2D and 3D animation, which has strengthened my understanding of movement, timing, and visual storytelling. This background in animation allows me to design characters that feel more dynamic and adaptable across different media, from static illustrations to animated sequences. As I continue to grow, my goal is to become a more versatile and well-rounded digital artist, combining my strengths in illustration and animation to contribute to a wide range of creative projects while continuing to refine my craft and develop my personal artistic style.
-          </p>
-        </div>
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: isMobile ? '10px' : '20px' }}>
-          <div style={{ position: 'relative', height: isMobile ? '300px' : isTablet ? '400px' : '500px', width: '100%', borderRadius: '8px', overflow: 'hidden' }}>
-            <div 
-              style={{ 
-                position: 'absolute', 
-                inset: 0, 
-                backgroundImage: `url('${featuredImages[currentImageIndex].image}')`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                filter: 'blur(20px)',
-                zIndex: 0,
-                backgroundColor: '#f2f2f2',
-                backgroundRepeat: 'no-repeat'
-              }}
-            ></div>
-            <div 
-              style={{ position: 'absolute', width: '100%', height: '100%', opacity: 1, transition: 'opacity 0.5s ease-in-out', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
-              onClick={() => setIsModalOpen(true)}
-            >
-              <Image
-                key={currentImageIndex}
-                src={featuredImages[currentImageIndex].image}
-                alt={featuredImages[currentImageIndex].title}
-                fill
-                style={{ objectFit: 'contain' }}
-                priority
-              />
+          <div className="aboutGrid">
+            <div className="aboutCopy">
+              <p>
+                I am a freelance digital artist who has been working with multiple individual clients since 2020, gaining practical
+                experience through a wide range of commissioned projects. My artistic journey began at a very young age, as I have been
+                drawing since I was six years old. What started as a childhood hobby gradually became a serious pursuit when I was around
+                fifteen, and by the age of eighteen, I began formally studying digital art to further develop my technical and creative
+                skills. Over the years, I have learned how to work closely with clients, interpret creative direction, manage deadlines, and
+                deliver high-quality artwork that balances artistic vision with client expectations. These experiences have helped shape me
+                not only as an artist, but also as a professional who values clear communication, consistency, and continuous improvement.
+              </p>
+              <p>
+                My main specialties are character design and character illustration, where I focus on creating expressive, visually
+                compelling characters that communicate personality, emotion, and story. I am currently expanding my creative abilities by
+                studying both 2D and 3D animation, which has strengthened my understanding of movement, timing, and visual storytelling. This
+                background in animation allows me to design characters that feel more dynamic and adaptable across different media, from
+                static illustrations to animated sequences. As I continue to grow, my goal is to become a more versatile and well-rounded
+                digital artist, combining my strengths in illustration and animation to contribute to a wide range of creative projects while
+                continuing to refine my craft and develop my personal artistic style.
+              </p>
+              <div className="pillRow">
+                <span className="pill">Commission Work</span>
+                <span className="pill">Character Design</span>
+                <span className="pill">Illustration</span>
+                <span className="pill">2D/3D Animation</span>
+              </div>
+            </div>
+            <div className="carousel">
+              <div
+                className="carouselFrame"
+                style={{ height: isMobile ? '260px' : isTablet ? '380px' : '520px' }}
+              >
+                <div
+                  className="carouselBlur"
+                  style={{ backgroundImage: `url('${featuredImages[currentImageIndex].image}')` }}
+                />
+                <div className="carouselImageWrap" onClick={() => setIsModalOpen(true)}>
+                  <Image
+                    key={currentImageIndex}
+                    src={featuredImages[currentImageIndex].image}
+                    alt={featuredImages[currentImageIndex].title}
+                    fill
+                    className="carouselImage"
+                    priority
+                  />
+                </div>
+              </div>
+              <div className="carouselControls">
+                <button className="button ghost" onClick={handlePrevious}>
+                  ← Previous
+                </button>
+                <span className="carouselCounter">
+                  {currentImageIndex + 1} / {featuredImages.length}
+                </span>
+                <button className="button ghost" onClick={handleNext}>
+                  Next →
+                </button>
+              </div>
             </div>
           </div>
-          <div style={{ display: 'flex', gap: isMobile ? '8px' : '15px', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap' }}>
-            <button
-              onClick={handlePrevious}
-              style={{
-                ...buttonStyle,
-                padding: isMobile ? '8px 12px' : '10px 20px',
-                fontSize: isMobile ? '0.85rem' : '1rem'
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#fff'; e.currentTarget.style.color = '#000'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#333'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.transform = 'scale(1)'; }}
-              onMouseDown={(e) => { e.currentTarget.style.transform = 'scale(0.97)'; }}
-              onMouseUp={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
-            >
-              ← Previous
-            </button>
-            <span style={{ alignSelf: 'center', fontWeight: 'bold', color: '#fff', fontSize: isMobile ? '0.85rem' : '1rem' }}>
-              {currentImageIndex + 1} / {featuredImages.length}
-            </span>
-            <button
-              onClick={handleNext}
-              style={{
-                ...buttonStyle,
-                padding: isMobile ? '8px 12px' : '10px 20px',
-                fontSize: isMobile ? '0.85rem' : '1rem'
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#fff'; e.currentTarget.style.color = '#000'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#333'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.transform = 'scale(1)'; }}
-              onMouseDown={(e) => { e.currentTarget.style.transform = 'scale(0.97)'; }}
-              onMouseUp={(e) => { e.currentTarget.style.transform = 'scale(1)'; }}
-            >
-              Next →
-            </button>
-          </div>
-        </div>
-          </div>
         )}
-        
+
         {activeTab === 'gallery' && (
-          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : isTablet ? 'repeat(2, 1fr)' : 'repeat(auto-fill, minmax(250px, 1fr))', gap: isMobile ? '15px' : '20px', padding: isMobile ? '10px' : '20px' }}>
+          <div className="galleryGrid">
             {portfolioItems.map((item, index) => (
-              <div 
+              <button
                 key={item.id}
-                onClick={() => { setCurrentImageIndex(index); setIsModalOpen(true); }}
-                style={{ 
-                  position: 'relative', 
-                  height: isMobile ? '200px' : '250px', 
-                  borderRadius: '8px', 
-                  overflow: 'hidden',
-                  cursor: 'pointer',
-                  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-                  boxShadow: '0 4px 6px rgba(0, 0, 0, 0.3)'
+                type="button"
+                className="galleryCard"
+                onClick={() => {
+                  setCurrentImageIndex(index);
+                  setIsModalOpen(true);
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.05)'; e.currentTarget.style.boxShadow = '0 8px 12px rgba(0, 0, 0, 0.5)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.3)'; }}
               >
-                <Image
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  style={{ objectFit: 'cover' }}
-                />
-              </div>
+                <Image src={item.image} alt={item.title} fill className="galleryImage" />
+              </button>
             ))}
           </div>
         )}
-        
+
         {activeTab === 'socials' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '15px' : '30px', padding: isMobile ? '10px' : '20px' }}>
-            <h2 style={{ color: '#fff', fontSize: isMobile ? '1.2rem' : '1.5rem', marginBottom: '10px', textAlign: 'center' }}>Connect With Me</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(350px, 1fr))', gap: isMobile ? '20px' : '30px', maxWidth: '1100px', margin: '0 auto', width: '100%' }}>
-              
-              {/* X/Twitter Card with Embed */}
-              <div
-                style={{
-                  backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                  borderRadius: '12px',
-                  padding: isMobile ? '15px' : '20px',
-                  border: '2px solid rgba(29, 155, 240, 0.5)',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '15px'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '10px' : '15px', marginBottom: '10px' }}>
-                  <div style={{ fontSize: isMobile ? '1.5rem' : '2rem' }}>𝕏</div>
+          <div className="socials">
+            <h2 className="sectionTitle">Connect With Me</h2>
+            <div className="socialGrid">
+              <div className="socialCard twitter">
+                <div className="socialHeader">
+                  <div className="socialIcon">𝕏</div>
                   <div>
-                    <h3 style={{ margin: '0', fontSize: isMobile ? '1rem' : '1.2rem', color: '#1DA1F2' }}>X (Twitter)</h3>
-                    <p style={{ margin: '5px 0 0 0', fontSize: isMobile ? '0.8rem' : '0.9rem', color: '#aaa' }}>@The_Artspear</p>
+                    <h3>X (Twitter)</h3>
+                    <p>@The_Artspear</p>
                   </div>
                 </div>
-                <div style={{ 
-                  backgroundColor: 'rgba(255, 255, 255, 0.05)', 
-                  borderRadius: '8px', 
-                  overflow: 'hidden',
-                  height: '400px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
-                  <a 
-                    className="twitter-timeline" 
-                    data-theme="dark" 
-                    data-height="400" 
+                <div className="socialEmbed">
+                  <a
+                    className="twitter-timeline"
+                    data-theme="dark"
+                    data-height="400"
                     href="https://twitter.com/The_Artspear?ref_src=twsrc%5Etfw"
-                    style={{ width: '100%', height: '100%', color: '#fff' }}
                   >
                     Loading timeline...
                   </a>
@@ -330,55 +246,23 @@ export default function Home() {
                   href="https://x.com/The_Artspear"
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{
-                    padding: '12px 20px',
-                    backgroundColor: '#1DA1F2',
-                    color: '#fff',
-                    textDecoration: 'none',
-                    borderRadius: '8px',
-                    textAlign: 'center',
-                    fontWeight: 'bold',
-                    transition: 'background-color 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#1a8cd8'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#1DA1F2'; }}
+                  className="button brand"
                 >
                   Visit Profile →
                 </a>
               </div>
 
-              {/* Instagram Card with Preview */}
-              <div
-                style={{
-                  backgroundColor: 'rgba(0, 0, 0, 0.6)',
-                  borderRadius: '12px',
-                  padding: isMobile ? '15px' : '20px',
-                  border: '2px solid rgba(225, 48, 108, 0.5)',
-                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '15px'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '10px' : '15px', marginBottom: '10px' }}>
-                  <div style={{ fontSize: isMobile ? '1.5rem' : '2rem' }}>📷</div>
+              <div className="socialCard instagram">
+                <div className="socialHeader">
+                  <div className="socialIcon">📷</div>
                   <div>
-                    <h3 style={{ margin: '0', fontSize: isMobile ? '1rem' : '1.2rem', background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Instagram</h3>
-                    <p style={{ margin: '5px 0 0 0', fontSize: isMobile ? '0.8rem' : '0.9rem', color: '#aaa' }}>@the_artspear</p>
+                    <h3>Instagram</h3>
+                    <p>@the_artspear</p>
                   </div>
                 </div>
-                <div style={{ 
-                  backgroundColor: 'rgba(255, 255, 255, 0.05)', 
-                  borderRadius: '8px', 
-                  overflow: 'hidden',
-                  height: '400px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>
+                <div className="socialEmbed">
                   <iframe
                     src="https://www.instagram.com/the_artspear/embed"
-                    style={{ width: '100%', height: '100%', border: 'none', backgroundColor: 'transparent' }}
                     title="Instagram Profile"
                   />
                 </div>
@@ -386,260 +270,95 @@ export default function Home() {
                   href="https://www.instagram.com/the_artspear/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{
-                    padding: '12px 20px',
-                    background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)',
-                    color: '#fff',
-                    textDecoration: 'none',
-                    borderRadius: '8px',
-                    textAlign: 'center',
-                    fontWeight: 'bold',
-                    transition: 'opacity 0.2s ease'
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.opacity = '0.9'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.opacity = '1'; }}
+                  className="button brand gradient"
                 >
                   Visit Profile →
                 </a>
               </div>
-              
             </div>
 
-            {/* Contact Form */}
-            <div style={{ marginTop: isMobile ? '30px' : '50px', maxWidth: '800px', margin: '50px auto 0' }}>
-              <h2 style={{ color: '#fff', fontSize: isMobile ? '1.5rem' : '2rem', marginBottom: '20px', textAlign: 'center' }}>📧 Contact Me</h2>
-              <form action="https://formsubmit.co/robinjohnaranguiz@gmail.com" method="POST" style={{ display: 'flex', flexDirection: 'column', gap: isMobile ? '15px' : '20px' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '15px' : '20px' }}>
-                  <div>
-                    <label htmlFor="name" style={{ display: 'block', color: '#fff', marginBottom: '8px', fontSize: isMobile ? '0.9rem' : '1rem' }}>
-                      Full Name <span style={{ color: '#ff6b6b' }}>*</span>
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      required
-                      style={{
-                        width: '100%',
-                        padding: isMobile ? '10px' : '12px',
-                        borderRadius: '8px',
-                        border: '2px solid rgba(255, 255, 255, 0.2)',
-                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                        color: '#fff',
-                        fontSize: isMobile ? '0.9rem' : '1rem',
-                        outline: 'none',
-                        transition: 'border-color 0.3s ease'
-                      }}
-                      onFocus={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)'}
-                      onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'}
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="email" style={{ display: 'block', color: '#fff', marginBottom: '8px', fontSize: isMobile ? '0.9rem' : '1rem' }}>
-                      Email Address <span style={{ color: '#ff6b6b' }}>*</span>
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      required
-                      style={{
-                        width: '100%',
-                        padding: isMobile ? '10px' : '12px',
-                        borderRadius: '8px',
-                        border: '2px solid rgba(255, 255, 255, 0.2)',
-                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                        color: '#fff',
-                        fontSize: isMobile ? '0.9rem' : '1rem',
-                        outline: 'none',
-                        transition: 'border-color 0.3s ease'
-                      }}
-                      onFocus={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)'}
-                      onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label htmlFor="subject" style={{ display: 'block', color: '#fff', marginBottom: '8px', fontSize: isMobile ? '0.9rem' : '1rem' }}>
-                    Subject <span style={{ color: '#ff6b6b' }}>*</span>
+            <div className="contactCard">
+              <h2 className="sectionTitle">📧 Contact Me</h2>
+              <form
+                action="https://formsubmit.co/robinjohnaranguiz@gmail.com"
+                method="POST"
+                className="contactForm"
+              >
+                <div className="formRow">
+                  <label className="field">
+                    <span>
+                      Full Name <em>*</em>
+                    </span>
+                    <input type="text" name="name" required />
                   </label>
-                  <input
-                    type="text"
-                    id="subject"
-                    name="subject"
-                    required
-                    style={{
-                      width: '100%',
-                      padding: isMobile ? '10px' : '12px',
-                      borderRadius: '8px',
-                      border: '2px solid rgba(255, 255, 255, 0.2)',
-                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                      color: '#fff',
-                      fontSize: isMobile ? '0.9rem' : '1rem',
-                      outline: 'none',
-                      transition: 'border-color 0.3s ease'
-                    }}
-                    onFocus={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)'}
-                    onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'}
-                  />
-                </div>
-                <div>
-                  <label htmlFor="message" style={{ display: 'block', color: '#fff', marginBottom: '8px', fontSize: isMobile ? '0.9rem' : '1rem' }}>
-                    Message <span style={{ color: '#ff6b6b' }}>*</span>
+                  <label className="field">
+                    <span>
+                      Email Address <em>*</em>
+                    </span>
+                    <input type="email" name="email" required />
                   </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    required
-                    rows={isMobile ? 4 : 6}
-                    style={{
-                      width: '100%',
-                      padding: isMobile ? '10px' : '12px',
-                      borderRadius: '8px',
-                      border: '2px solid rgba(255, 255, 255, 0.2)',
-                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                      color: '#fff',
-                      fontSize: isMobile ? '0.9rem' : '1rem',
-                      outline: 'none',
-                      transition: 'border-color 0.3s ease',
-                      resize: 'vertical',
-                      fontFamily: 'inherit'
-                    }}
-                    onFocus={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.5)'}
-                    onBlur={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'}
-                  />
                 </div>
+                <label className="field">
+                  <span>
+                    Subject <em>*</em>
+                  </span>
+                  <input type="text" name="subject" required />
+                </label>
+                <label className="field">
+                  <span>
+                    Message <em>*</em>
+                  </span>
+                  <textarea name="message" rows={isMobile ? 4 : 6} required />
+                </label>
                 <input type="hidden" name="_captcha" value="false" />
-                <button
-                  type="submit"
-                  style={{
-                    padding: isMobile ? '12px 24px' : '15px 30px',
-                    backgroundColor: '#4CAF50',
-                    color: '#fff',
-                    border: 'none',
-                    borderRadius: '8px',
-                    fontSize: isMobile ? '1rem' : '1.1rem',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                    transition: 'all 0.3s ease'
-                  }}
-                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#45a049'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#4CAF50'; }}
-                >
+                <button type="submit" className="button primary">
                   Send Message
                 </button>
               </form>
             </div>
           </div>
         )}
-      </div>
+      </section>
+
       {isModalOpen && (
-        <div 
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100vw',
-            height: '100vh',
-            backgroundColor: 'rgba(0, 0, 0, 0.95)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 9999,
-            padding: isMobile ? '10px' : '20px'
-          }}
-          onClick={() => setIsModalOpen(false)}
-        >
+        <div className="modal" onClick={() => setIsModalOpen(false)}>
           <button
+            className="modalButton close"
             onClick={() => setIsModalOpen(false)}
-            style={{
-              position: 'absolute',
-              top: isMobile ? '10px' : '20px',
-              right: isMobile ? '10px' : '20px',
-              backgroundColor: 'rgba(255, 255, 255, 0.9)',
-              border: 'none',
-              borderRadius: '50%',
-              width: isMobile ? '40px' : '50px',
-              height: isMobile ? '40px' : '50px',
-              fontSize: isMobile ? '18px' : '24px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 'bold',
-              color: '#000',
-              transition: 'transform 0.2s ease, background-color 0.2s ease',
-              zIndex: 10000
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#fff'; e.currentTarget.style.transform = 'scale(1.1)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.9)'; e.currentTarget.style.transform = 'scale(1)'; }}
+            aria-label="Close"
           >
             ✕
           </button>
           <button
-            onClick={(e) => { e.stopPropagation(); handlePrevious(); }}
-            style={{
-              position: 'absolute',
-              left: isMobile ? '10px' : '20px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              backgroundColor: 'rgba(255, 255, 255, 0.9)',
-              border: 'none',
-              borderRadius: '50%',
-              width: isMobile ? '40px' : '60px',
-              height: isMobile ? '40px' : '60px',
-              fontSize: isMobile ? '16px' : '24px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 'bold',
-              color: '#000',
-              transition: 'transform 0.2s ease, background-color 0.2s ease',
-              zIndex: 10000
+            className="modalButton prev"
+            onClick={(e) => {
+              e.stopPropagation();
+              handlePrevious();
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#fff'; e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.9)'; e.currentTarget.style.transform = 'translateY(-50%) scale(1)'; }}
+            aria-label="Previous"
           >
             ←
           </button>
           <button
-            onClick={(e) => { e.stopPropagation(); handleNext(); }}
-            style={{
-              position: 'absolute',
-              right: isMobile ? '10px' : '20px',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              backgroundColor: 'rgba(255, 255, 255, 0.9)',
-              border: 'none',
-              borderRadius: '50%',
-              width: isMobile ? '40px' : '60px',
-              height: isMobile ? '40px' : '60px',
-              fontSize: isMobile ? '16px' : '24px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: 'bold',
-              color: '#000',
-              transition: 'transform 0.2s ease, background-color 0.2s ease',
-              zIndex: 10000
+            className="modalButton next"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleNext();
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#fff'; e.currentTarget.style.transform = 'translateY(-50%) scale(1.1)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.9)'; e.currentTarget.style.transform = 'translateY(-50%) scale(1)'; }}
+            aria-label="Next"
           >
             →
           </button>
-          <div style={{ position: 'relative', width: isMobile ? '85vw' : '90vw', height: isMobile ? '70vh' : '90vh', maxWidth: '1400px', maxHeight: '900px' }} onClick={(e) => e.stopPropagation()}>
+          <div className="modalImage" onClick={(e) => e.stopPropagation()}>
             <Image
               src={featuredImages[currentImageIndex].image}
               alt={featuredImages[currentImageIndex].title}
               fill
-              style={{ objectFit: 'contain' }}
+              className="modalImageContent"
               priority
             />
           </div>
-          <div style={{ position: 'absolute', bottom: isMobile ? '15px' : '30px', color: '#fff', fontSize: isMobile ? '14px' : '18px', fontWeight: 'bold', zIndex: 10000 }}>
+          <div className="modalCounter">
             {currentImageIndex + 1} / {featuredImages.length}
           </div>
         </div>
